@@ -3,3 +3,8 @@ line-length = 100
 
 [pylint.FORMAT]
 max-line-length = 100
+
+[tool.isort]
+line_length = 100
+multi_line_output = 3
+include_trailing_comma = true

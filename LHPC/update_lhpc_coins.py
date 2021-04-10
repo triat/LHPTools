@@ -10,11 +10,11 @@ __license__ = "GNU General Public License v3.0"
 import argparse
 import json
 import logging
-import requests
 import sys
-
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+
+import requests
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
