@@ -33,5 +33,5 @@ jobs:
           use-flake8: true
           use-black: true
           use-mypy: true
-          use-isort: true
+          use-isort: false
           use-pycodestyle: false
