@@ -31,7 +31,7 @@ jobs:
         with:
           use-pylint: true
           use-flake8: true
-          use-black: true
+          use-black: false
           use-mypy: true
           use-isort: false
           use-pycodestyle: false
