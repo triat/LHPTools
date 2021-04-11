@@ -74,7 +74,12 @@ def update_coin_configuration(config_data: Dict[str, Any]) -> Dict[str, Any]:
     for coin in config_data["coins"]:
         new_lickvalue = get_liquidation_value(coin["symbol"], "average_usdt")
         if new_lickvalue is None:
-            logger.warning(f"{coin['symbol']} has not been updated, no liquidation value found")
+            logger.warning(
+                f"{coin['symbol']} has not been updated, no liquidation value found. "
+                f"Old value is kept"
+            )
+            continue
+        new_lickvalue = round(new_lickvalue)
         logger.info(f"{coin['symbol']} \t {coin['lickvalue']} \t -> \t {new_lickvalue}")
         coin["lickvalue"] = f"{new_lickvalue}"
     return config_data
@@ -95,7 +100,6 @@ def main(config_file: Path) -> None:
 
 
 if __name__ == "__main__":
-    logger.info("======= Starting to update the coins =======")
     args = parser.parse_args()
     if args.debug:
         logger.setLevel(logging.DEBUG)
@@ -106,6 +110,7 @@ if __name__ == "__main__":
         raise ValueError(f"Config file does not exists at path {args.config_file.name}")
 
     try:
+        logger.info("======= Starting to update the coins =======")
         main(config_file=Path(args.config_file))
     except Exception as e:
         logger.exception(e)
