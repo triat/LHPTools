@@ -2,10 +2,10 @@
 line-length = 100
 
 [tool.pylint.messages_control]
-disable = "C0330, C0326"
+disable = "C0330, C0326, missing-function-docstring"
 
 [tool.pylint.format]
-max-line-length = "88"
+max-line-length = "100"
 
 [tool.isort]
 multi_line_output = 3

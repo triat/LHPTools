@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Update liquidations values for the LHPControl GUI"""
 
 __author__ = "Tom Riat"
 __version__ = "1.0.0"
@@ -31,7 +32,7 @@ parser.add_argument(
     help="Give additional debug output",
 )
 
-liquididation_datas: List[Dict[str, Any]] = [{}]
+LIQUIDATION_DATAS: List[Dict[str, Any]] = [{}]
 
 
 def get_liquidations_data() -> None:
@@ -41,14 +42,14 @@ def get_liquidations_data() -> None:
     logger.debug(response.status_code, response.text)
     response.raise_for_status()
 
-    global liquididation_datas
-    liquididation_datas = response.json()["data"]
+    global LIQUIDATION_DATAS  # pylint: disable=global-statement
+    LIQUIDATION_DATAS = response.json()["data"]
 
 
 def get_liquidation_value(coin_name: str, value: str) -> Optional[float]:
     """Get a specific coin liquidation value"""
-    logger.debug(f"coin: {coin_name}, value: {value}")
-    for data in liquididation_datas:
+    logger.debug("coin: %s, value: %s", coin_name, value)
+    for data in LIQUIDATION_DATAS:
         if data["symbol"] == coin_name:
             return data[value]
     logger.debug("No liquidation value found")
@@ -58,10 +59,10 @@ def get_liquidation_value(coin_name: str, value: str) -> Optional[float]:
 def load_config_file(config_file: Path) -> Dict[str, Any]:
     """Parse the configuration file of LHPControl and load its values"""
     config_data = None
-    logger.debug(f"file path: {config_file.name}")
+    logger.debug("file path: %s", config_file.name)
     with open(config_file, "r") as file:
         config_data = json.load(file)
-    logger.debug(f"file data: {config_data}")
+    logger.debug("file data: %s", config_data)
 
     if config_data is None:
         raise ValueError("Could not load config file data")
@@ -75,19 +76,19 @@ def update_coin_configuration(config_data: Dict[str, Any]) -> Dict[str, Any]:
         new_lickvalue = get_liquidation_value(coin["symbol"], "average_usdt")
         if new_lickvalue is None:
             logger.warning(
-                f"{coin['symbol']} has not been updated, no liquidation value found. "
-                f"Old value is kept"
+                "%s has not been updated, no liquidation value found. Old value is kept",
+                coin["symbol"],
             )
             continue
         new_lickvalue = round(new_lickvalue)
-        logger.info(f"{coin['symbol']} \t {coin['lickvalue']} \t -> \t {new_lickvalue}")
+        logger.info("%s \t %s \t -> \t %s", coin["symbol"], coin["lickvalue"], new_lickvalue)
         coin["lickvalue"] = f"{new_lickvalue}"
     return config_data
 
 
 def save_new_configuration(config_data: Dict[str, Any], config_file: Path) -> None:
     """Update the configuration document with the new values"""
-    logger.debug(f"new config data: {config_data}")
+    logger.debug("new config data: %s", config_data)
     with open(config_file, "w") as file:
         json.dump(config_data, file, indent=4)
 
@@ -112,8 +113,8 @@ if __name__ == "__main__":
     try:
         logger.info("======= Starting to update the coins =======")
         main(config_file=Path(args.config_file))
-    except Exception as e:
-        logger.exception(e)
+    except Exception:  # pylint: disable=broad-except
+        logger.exception("Unexpected error while running the script")
         logger.info("======= Update failed =======")
     else:
         logger.info("======= Update done =======")
