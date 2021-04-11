@@ -34,13 +34,13 @@ On Windows:
 
 Dependencies can be installed for your system via its package management but, more likely, you will want to install them yourself in a local virtual environment.
 
-```bash
+```console
 $ python3 -m venv ~/.venvs/lhptools
 ```
 
 Make sure to always activate your virtual environment before using it:
 
-```bash
+```console
 $ source  ~/.venvs/lhptools/bin/activate
 ```
 
@@ -48,19 +48,19 @@ You may want to use [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io
 
 ## LHPTools installation and upgrade
 
-Before you go any further, make sure you're installed all the requirements detailed in the (#requirements-installation).
+Before you go any further, make sure you're installed all the requirements detailed in the [requirements installation](#requirements-installation).
 
 ### Clone the repo
 
 The easiest way for now to get the LHPTools scripts and keep it up to date is to clone the repository on your system using [git](https://git-scm.com/)
 
-```bash
+```console
 $ git clone https://github.com/triat/LHPTools.git
 ```
 
 From here, you can update the scripts using
 
-```bash
+```console
 $ git pull
 ```
 
@@ -72,7 +72,7 @@ While cloning the repo helps you to keep everything up-to-date with a single com
 
 All the scripts you find in this repo contains a helper that you can display with `-h | --help` parameter. It describes what it does and how you can use it. 
 
-```bash
+```console
 $ python3 update_coins.py --help
 
 usage: update_coins.py [-h] [--config-file CONFIG_FILE] [--debug]
