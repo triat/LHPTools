@@ -93,7 +93,8 @@ def update_coin_configuration(config_data: Dict[str, Any], liq_percentage: float
         if liq_percentage > 0:
             new_lickvalue = new_lickvalue + (new_lickvalue * liq_percentage / 100)
         new_lickvalue = round(new_lickvalue)
-        logger.info("%s \t %s \t -> \t %s", coin["symbol"], coin["lickvalue"], new_lickvalue)
+        percent_change =  get_percent_change( int(coin["lickvalue"]), new_lickvalue)
+        logger.info("%s \t %s \t -> \t %s (%s)", coin["symbol"], coin["lickvalue"], new_lickvalue, percent_change)
         coin["lickvalue"] = f"{new_lickvalue}"
     return config_data
 
@@ -110,6 +111,17 @@ def main(config_file: Path, liq_percentage: float) -> None:
     config_data = load_config_file(config_file)
     new_configuration = update_coin_configuration(config_data, liq_percentage)
     save_new_configuration(new_configuration, config_file)
+
+
+def get_percent_change(previous, current):
+    if current == previous:
+        return 0
+    try:
+        change = round((abs(current - previous) / previous) * 100.0, 2)
+        sign = '+' if current >= previous else '-'
+        return sign + str(change) + '%'
+    except ZeroDivisionError:
+        return 0
 
 
 if __name__ == "__main__":
