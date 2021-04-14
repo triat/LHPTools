@@ -26,6 +26,16 @@ parser.add_argument(
     help="Path to LHPC config file (usually called `varPairs.json`)",
 )
 parser.add_argument(
+    "--add-liq-percentage",
+    type=float,
+    default="0.0",
+    dest="liq_percentage",
+    help=(
+        "Add a percentage to the liq value of each coin. e.g: add percentage = 10, liq value = "
+        "1000, coin liq value will be set at 1100"
+    ),
+)
+parser.add_argument(
     "--debug",
     action="store_true",
     dest="debug",
@@ -70,7 +80,7 @@ def load_config_file(config_file: Path) -> Dict[str, Any]:
     return config_data
 
 
-def update_coin_configuration(config_data: Dict[str, Any]) -> Dict[str, Any]:
+def update_coin_configuration(config_data: Dict[str, Any], liq_percentage: float) -> Dict[str, Any]:
     """Update the configuration with the latest coin liquidation values"""
     for coin in config_data["coins"]:
         new_lickvalue = get_liquidation_value(coin["symbol"], "average_usdt")
@@ -80,6 +90,8 @@ def update_coin_configuration(config_data: Dict[str, Any]) -> Dict[str, Any]:
                 coin["symbol"],
             )
             continue
+        if liq_percentage > 0:
+            new_lickvalue = new_lickvalue + (new_lickvalue * liq_percentage / 100)
         new_lickvalue = round(new_lickvalue)
         logger.info("%s \t %s \t -> \t %s", coin["symbol"], coin["lickvalue"], new_lickvalue)
         coin["lickvalue"] = f"{new_lickvalue}"
@@ -93,10 +105,10 @@ def save_new_configuration(config_data: Dict[str, Any], config_file: Path) -> No
         json.dump(config_data, file, indent=4)
 
 
-def main(config_file: Path) -> None:
+def main(config_file: Path, liq_percentage: float) -> None:
     get_liquidations_data()
     config_data = load_config_file(config_file)
-    new_configuration = update_coin_configuration(config_data)
+    new_configuration = update_coin_configuration(config_data, liq_percentage)
     save_new_configuration(new_configuration, config_file)
 
 
@@ -112,7 +124,7 @@ if __name__ == "__main__":
 
     try:
         logger.info("======= Starting to update the coins =======")
-        main(config_file=Path(args.config_file))
+        main(config_file=Path(args.config_file), liq_percentage=args.liq_percentage)
     except Exception:  # pylint: disable=broad-except
         logger.exception("Unexpected error while running the script")
         logger.info("======= Update failed =======")
