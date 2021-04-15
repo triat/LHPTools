@@ -93,7 +93,7 @@ def update_coin_configuration(config_data: Dict[str, Any], liq_percentage: float
         if liq_percentage > 0:
             new_lickvalue = new_lickvalue + (new_lickvalue * liq_percentage / 100)
         new_lickvalue = round(new_lickvalue)
-        percent_change =  get_percent_change( int(coin["lickvalue"]), new_lickvalue)
+        percent_change = get_percent_change(int(coin["lickvalue"]), new_lickvalue)
         logger.info("%s \t %s \t -> \t %s (%s)",
                     coin["symbol"],
                     coin["lickvalue"],
