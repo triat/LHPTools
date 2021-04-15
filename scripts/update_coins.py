@@ -114,6 +114,7 @@ def main(config_file: Path, liq_percentage: float) -> None:
 
 
 def get_percent_change(previous, current):
+    """Get percentage of change between current and previous liq values"""    
     if current == previous:
         return 0
     try:
